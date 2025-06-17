@@ -1,0 +1,15 @@
+{
+  "domain": "library_books",
+  "name": "Library Books Integration",
+  "version": "0.1.0",
+  "documentation": "https://github.com/yourusername/library-books-integration#readme",
+  "requirements": [
+    "requests",
+    "beautifulsoup4"
+  ],
+  "dependencies": [],
+  "codeowners": [
+    "@yourusername"
+  ],
+  "iot_class": "cloud_polling"
+}
