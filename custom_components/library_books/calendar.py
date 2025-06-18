@@ -66,7 +66,8 @@ class LibraryBooksCalendar(CalendarEntity):
 
             if start_date.date() <= due_date < end_date.date():
                 event = CalendarEvent(
-                    dtstart=due_date,
+                    start=due_date,
+                    end=due_date + timedelta(days=1),
                     summary=book.title or "Unknown Title",
                     description=f"Author: {book.author or 'N/A'}\nOverdue: {'Yes' if book.is_overdue else 'No'}",
                     uid=book.barcode,
