@@ -10,9 +10,11 @@ class LibraryBook:
     due_date: date
     isbn: Optional[str] = None
     barcode: Optional[str] = None
+    image_url: Optional[str] = ""
     renewable: bool = True
     renewal_count: int = 0
     fine_amount: float = 0.0
+    library_name: Optional[str] = None
     
     def __str__(self) -> str:
         """String representation of the book."""

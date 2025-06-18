@@ -1,70 +1,57 @@
+"""Calendar platform for library books integration."""
 from datetime import datetime, timedelta
-from typing import List, Optional
 import logging
+from typing import Any, Dict, List, Optional
 
 from homeassistant.components.calendar import CalendarEntity, CalendarEvent
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
+import homeassistant.util.dt as dt_util
+from homeassistant.util import slugify
 
 from .const import DOMAIN
-from .library_scraper import LibraryBook
 from .coordinator import LibraryBooksCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
+async def async_setup_entry(
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+) -> None:
+    """Set up the Library Books calendar platform."""
+    coordinator = hass.data[DOMAIN][entry.entry_id]["coordinator"]
+    library_name = entry.data[CONF_NAME]
+    username = entry.data[CONF_USERNAME]
+    
+    # Create calendar for this library
+    calendar = LibraryBooksCalendar(coordinator, entry.entry_id, library_name, username)
+    async_add_entities([calendar], True)
+
 class LibraryBooksCalendar(CalendarEntity):
-    """Calendar entity for library books."""
-    
-    def __init__(self, hass: HomeAssistant, coordinator: LibraryBooksCoordinator, library_name: str):
-        self.hass = hass
+    """Library Books Calendar class."""
+
+    def __init__(self, coordinator, entry_id, library_name, username):
+        """Initialize the Library Books calendar."""
         self.coordinator = coordinator
+        self._entry_id = entry_id
         self._library_name = library_name
-        self._attr_name = f"Library Books - {library_name}"
-        self._attr_unique_id = f"library_books_calendar_{library_name.lower().replace(' ', '_')}"
+        self._username = username
+        
+        # Set display name to just the library name from config
+        self._name = library_name
+        
+        # Generate entity ID using both library name and username - properly slugified
+        safe_library_name = slugify(library_name)
+        safe_username = slugify(username)
+        
+        # Unique ID should match the entity ID pattern but include entry_id for complete uniqueness
+        self._attr_unique_id = f"{DOMAIN}_calendar_{safe_library_name}_{safe_username}_{entry_id}"
+        
+        # Create entity ID matching the pattern: calendar.library_books_libraryname_username
+        self.entity_id = f"calendar.library_books_{safe_library_name}_{safe_username}"
     
     @property
-    def device_info(self) -> DeviceInfo:
-        return DeviceInfo(
-            identifiers={(DOMAIN, self._library_name)},
-            name=f"Library Books - {self._library_name}",
-            manufacturer="Library Books Integration",
-        )
-    
-    @property
-    def event(self) -> Optional[CalendarEvent]:
-        """Return the next upcoming event."""
-        events = self._get_calendar_events()
-        if events:
-            return min(events, key=lambda x: x.start)
-        return None
-    
-    async def async_get_events(self, hass: HomeAssistant, start_date: datetime, end_date: datetime) -> List[CalendarEvent]:
-        """Get events within the specified date range."""
-        return [
-            event for event in self._get_calendar_events()
-            if start_date <= event.start <= end_date
-        ]
-    
-    def _get_calendar_events(self) -> List[CalendarEvent]:
-        """Convert library books to calendar events."""
-        events = []
-        books = self.coordinator.data.get(self._library_name, [])
-        
-        for book in books:
-            # Create event for due date
-            due_datetime = datetime.combine(book.due_date, datetime.min.time())
-            
-            event = CalendarEvent(
-                start=due_datetime,
-                end=due_datetime + timedelta(hours=1),  # 1-hour duration
-                summary=f"📚 {book.title} due",
-                description=f"Book: {book.title}\nAuthor: {book.author}\nDue: {book.due_date.strftime('%B %d, %Y')}",
-                uid=f"library_book_{book.title}_{book.due_date}"
-            )
-            events.append(event)
-        
-        return events
-    
-    async def async_update(self) -> None:
-        """Update the calendar."""
-        await self.coordinator.async_request_refresh()
+    def name(self):
+        """Return the name of the entity."""
+        return self._name

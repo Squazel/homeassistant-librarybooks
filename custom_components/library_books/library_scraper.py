@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 from datetime import datetime, date
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 import logging
-import aiohttp
 import asyncio
 
 from .models import LibraryBook
@@ -12,7 +11,16 @@ _LOGGER = logging.getLogger(__name__)
 class BaseLibraryScraper(ABC):
     """Base class for library website scrapers."""
     
-    def __init__(self, library_url: str, username: str, password: str, session: aiohttp.ClientSession):
+    def __init__(self, library_url: str, username: str, password: str, session=None):
+        """
+        Initialize the scraper.
+        
+        Args:
+            library_url: URL of the library website
+            username: Library account username/card number
+            password: Library account password/PIN
+            session: Optional HTTP session
+        """
         self.library_url = library_url
         self.username = username
         self.password = password

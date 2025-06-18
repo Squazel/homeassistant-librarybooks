@@ -1,6 +1,5 @@
 import asyncio
 from time import sleep
-import aiohttp
 import logging
 import os
 from pathlib import Path
@@ -30,41 +29,41 @@ async def test_libero_scraper():
         print("   LIBRARY_PASSWORD=your_password")
         return
     
-    async with aiohttp.ClientSession() as session:
-        scraper = LiberoLibraryScraper(
-            library_url=LIBRARY_URL,
-            username=USERNAME,
-            password=PASSWORD,
-            session=session
-        )
-        
-        try:
-            print("Testing login...")
-            login_success = await scraper.login()
-            print(f"Login successful: {login_success}")
+    # Create the scraper
+    scraper = LiberoLibraryScraper(
+        library_url=LIBRARY_URL,
+        username=USERNAME,
+        password=PASSWORD
+    )
+    
+    try:
+        print("Testing login...")
+        login_success = await scraper.login()
+        print(f"Login successful: {login_success}")
+
+        if login_success:
+            print("Getting outstanding books...")
+            books = await scraper.get_outstanding_books()
+            print(f"Found {len(books)} books:")
             
-            if login_success:
-                print("Getting outstanding books...")
-                books = await scraper.get_outstanding_books()
-                print(f"Found {len(books)} books:")
-                
-                for book in books:
-                    print(f"  📚 {book.title}")
-                    print(f"     Author: {book.author}")
-                    print(f"     Due: {book.due_date}")
-                    if book.is_overdue:
-                        print(f"     ⚠️  OVERDUE by {abs(book.days_until_due)} days")
-                    else:
-                        print(f"     Due in {book.days_until_due} days")
-                    print()
-            
-        except Exception as e:
-            print(f"Error: {e}")
-            import traceback
-            traceback.print_exc()
+            for book in books:
+                print(f"  📚 {book.title}")
+                print(f"     Author: {book.author}")
+                print(f"     Image URL: {book.image_url}")
+                print(f"     Due: {book.due_date}")
+                if book.is_overdue:
+                    print(f"     ⚠️  OVERDUE by {abs(book.days_until_due)} days")
+                else:
+                    print(f"     Due in {book.days_until_due} days")
+                print()
         
-        finally:
-            await scraper.logout()
+    except Exception as e:
+        print(f"Error: {e}")
+        import traceback
+        traceback.print_exc()
+    
+    finally:
+        await scraper.logout()
 
 if __name__ == "__main__":
     asyncio.run(test_libero_scraper())

@@ -1,13 +1,14 @@
-# Constants for the library books integration
+"""Constants for the Library Books integration."""
 
 DOMAIN = "library_books"
-CONF_LIBRARY_URL = "library_url"
+
+# Configuration constants
 CONF_LIBRARY_TYPE = "library_type"
+CONF_LIBRARY_URL = "library_url"
 CONF_USERNAME = "username"
 CONF_PASSWORD = "password"
+CONF_NAME = "name"
 CONF_UPDATE_INTERVAL = "update_interval"
-CONF_CALENDAR_NAME = "calendar_name"
-CONF_USE_SEPARATE_CALENDARS = "use_separate_calendars"
 
 DEFAULT_UPDATE_INTERVAL = 60  # in minutes
 DEFAULT_CALENDAR_NAME = "Library Books"

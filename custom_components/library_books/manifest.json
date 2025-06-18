@@ -1,15 +1,11 @@
 {
   "domain": "library_books",
-  "name": "Library Books Integration",
+  "name": "Library Books",
   "version": "0.1.0",
-  "documentation": "https://github.com/yourusername/library-books-integration#readme",
-  "requirements": [
-    "requests",
-    "beautifulsoup4"
-  ],
+  "documentation": "https://github.com/Squazel/library-books-integration",
   "dependencies": [],
-  "codeowners": [
-    "@yourusername"
-  ],
+  "codeowners": ["@Squazel"],
+  "requirements": ["requests>=2.25.0"],
+  "config_flow": true,
   "iot_class": "cloud_polling"
 }

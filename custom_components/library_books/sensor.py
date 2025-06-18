@@ -1,41 +1,113 @@
-from homeassistant.helpers.entity import Entity
-import requests
-from bs4 import BeautifulSoup
-from .const import DOMAIN, SENSOR_NAME
+"""Sensor platform for library books integration."""
+import logging
+from typing import Any, Dict, List, Optional, cast
 
-class LibraryBooksSensor(Entity):
-    def __init__(self):
-        self._state = None
-        self._attributes = {}
+from homeassistant.components.sensor import (
+    SensorEntity, 
+    SensorDeviceClass,
+    SensorEntityDescription,
+)
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
+from .const import DOMAIN
+from .coordinator import LibraryBooksCoordinator
+
+_LOGGER = logging.getLogger(__name__)
+
+async def async_setup_entry(
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+) -> None:
+    """Set up the library books sensors."""
+    coordinator = hass.data[DOMAIN][entry.entry_id]
+    library_name = entry.data.get("name", "Library")
+    
+    entities = [
+        LibraryBooksTotalSensor(coordinator, library_name),
+        LibraryBooksOverdueSensor(coordinator, library_name),
+    ]
+    
+    async_add_entities(entities)
+
+class LibraryBooksTotalSensor(CoordinatorEntity, SensorEntity):
+    """Sensor tracking total number of library books."""
+
+    def __init__(self, coordinator: LibraryBooksCoordinator, library_name: str):
+        """Initialize the sensor."""
+        super().__init__(coordinator)
+        self.library_name = library_name
+        
+        self._attr_unique_id = f"{DOMAIN}_{library_name.lower().replace(' ', '_')}_total_books"
+        self._attr_name = f"{library_name} Total Books"
+        self._attr_icon = "mdi:book-multiple"
+        self._attr_device_class = "library_books"
+        self._attr_native_unit_of_measurement = "books"
+        
     @property
-    def name(self):
-        return SENSOR_NAME
-
+    def native_value(self) -> int:
+        """Return the total number of books."""
+        if not self.coordinator.data:
+            return 0
+        
+        return len(self.coordinator.data)
+        
     @property
-    def state(self):
-        return self._state
+    def extra_state_attributes(self) -> Dict[str, Any]:
+        """Return additional attributes about the books."""
+        if not self.coordinator.data:
+            return {}
+            
+        return {
+            "books": [
+                {
+                    "title": book.title,
+                    "author": book.author,
+                    "due_date": book.due_date.isoformat(),
+                    "is_overdue": book.is_overdue,
+                    "days_until_due": book.days_until_due,
+                }
+                for book in self.coordinator.data
+            ]
+        }
 
+class LibraryBooksOverdueSensor(CoordinatorEntity, SensorEntity):
+    """Sensor tracking number of overdue books."""
+
+    def __init__(self, coordinator: LibraryBooksCoordinator, library_name: str):
+        """Initialize the sensor."""
+        super().__init__(coordinator)
+        self.library_name = library_name
+        
+        self._attr_unique_id = f"{DOMAIN}_{library_name.lower().replace(' ', '_')}_overdue_books"
+        self._attr_name = f"{library_name} Overdue Books"
+        self._attr_icon = "mdi:book-alert"
+        self._attr_device_class = "library_books"
+        self._attr_native_unit_of_measurement = "books"
+        
     @property
-    def extra_state_attributes(self):
-        return self._attributes
-
-    def update(self):
-        self._scrape_library_website()
-
-    def _scrape_library_website(self):
-        url = "http://your-library-website.com/your-endpoint"  # Replace with actual URL
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, 'html.parser')
-
-        # Example scraping logic (customize based on actual website structure)
-        self._state = soup.find("div", class_="outstanding-books").text.strip()
-        self._attributes["due_dates"] = self._parse_due_dates(soup)
-
-    def _parse_due_dates(self, soup):
-        due_dates = {}
-        for book in soup.find_all("div", class_="book"):
-            title = book.find("h3").text.strip()
-            due_date = book.find("span", class_="due-date").text.strip()
-            due_dates[title] = due_date
-        return due_dates
+    def native_value(self) -> int:
+        """Return the number of overdue books."""
+        if not self.coordinator.data:
+            return 0
+        
+        return sum(1 for book in self.coordinator.data if book.is_overdue)
+        
+    @property
+    def extra_state_attributes(self) -> Dict[str, Any]:
+        """Return additional attributes about overdue books."""
+        if not self.coordinator.data:
+            return {}
+            
+        return {
+            "overdue_books": [
+                {
+                    "title": book.title,
+                    "author": book.author,
+                    "due_date": book.due_date.isoformat(),
+                    "days_overdue": abs(book.days_until_due),
+                }
+                for book in self.coordinator.data if book.is_overdue
+            ]
+        }
