@@ -9,7 +9,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util import dt as dt_util
 
-from .const import DOMAIN, CONF_LIBRARY_NAME
+from .const import DOMAIN, CONF_NAME
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ async def async_setup_entry(
 ) -> None:
     """Set up the Library Books calendar."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
-    library_name = entry.data.get(CONF_LIBRARY_NAME, "Library")
+    library_name = entry.data.get(CONF_NAME, "Library")
     
     async_add_entities([LibraryBooksCalendar(coordinator, entry.entry_id, library_name)], True)
 
