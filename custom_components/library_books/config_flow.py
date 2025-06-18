@@ -79,6 +79,7 @@ class LibraryBooksConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             
         return vol.Schema({
             vol.Required(CONF_NAME, default=user_input.get(CONF_NAME, "Library")): str,
+            # TODO: Revisit naming of library_type, maybe provider?
             vol.Required(
                 CONF_LIBRARY_TYPE, 
                 default=user_input.get(CONF_LIBRARY_TYPE, "libero")

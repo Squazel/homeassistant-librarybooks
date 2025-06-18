@@ -4,7 +4,7 @@ DOMAIN = "library_books"
 
 # Configuration constants
 CONF_LIBRARY_TYPE = "library_type"
-CONF_LIBRARY_URL = "library_url"
+CONF_LIBRARY_URL = "library_base_url"
 CONF_USERNAME = "username"
 CONF_PASSWORD = "password"
 CONF_NAME = "name"
