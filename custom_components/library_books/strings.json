@@ -1,0 +1,29 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Library Books Setup",
+        "description": "Configure your library account details",
+        "data": {
+          "name": "Name",
+          "library_type": "Library Type",
+          "library_base_url": "Library Base URL",
+          "username": "Username",
+          "password": "Password"
+        },
+        "data_description": {
+          "name": "A friendly name for this library account",
+          "library_type": "The type of library system your library uses",
+          "library_base_url": "e.g. https://<library_name>.libero.com.au",
+          "username": "Your library card number or username",
+          "password": "Your library PIN or password"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid authentication credentials",
+      "unsupported_library": "Unsupported library type",
+      "unknown": "Unexpected error occurred"
+    }
+  }
+}
