@@ -30,13 +30,24 @@ try:
             return False
         
         # Create coordinator and store in hass data
-        coordinator = LibraryBooksCoordinator(hass, scraper, name)
+        coordinator = LibraryBooksCoordinator(
+            hass,
+            _LOGGER,
+            library_api=library_api,
+            name=f"Library Books {library_name}",
+            update_interval=timedelta(hours=6),
+        )
+        
+        # Update the coordinator's data for the first time
         await coordinator.async_config_entry_first_refresh()
         
+        # Store the coordinator directly in hass.data
         hass.data.setdefault(DOMAIN, {})
         hass.data[DOMAIN][entry.entry_id] = coordinator
         
-        await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+        await hass.config_entries.async_forward_entry_setups(
+            entry, ["sensor", "calendar"]
+        )
         return True
     
     async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
