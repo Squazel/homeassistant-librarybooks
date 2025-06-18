@@ -2,7 +2,7 @@
   "domain": "library_books",
   "name": "Library Books",
   "version": "0.1.0",
-  "documentation": "https://github.com/Squazel/library-books-integration",
+  "documentation": "https://github.com/Squazel/homeassistant-librarybooks",
   "dependencies": [],
   "codeowners": ["@Squazel"],
   "requirements": ["requests>=2.25.0"],

@@ -21,7 +21,7 @@ This Home Assistant integration scrapes your local library's website to determin
 
 1. Make sure [HACS](https://hacs.xyz/) is installed in your Home Assistant instance
 2. Go to HACS → Integrations → ⋮ (menu) → Custom repositories
-3. Add the URL: `https://github.com/Squazel/library-books-integration`
+3. Add the URL: `https://github.com/Squazel/homeassistant-librarybooks`
 4. Category: Integration
 5. Click "Add"
 6. Search for "Library Books" in HACS Integrations
