@@ -58,7 +58,8 @@ class LibraryBooksCalendar(CalendarEntity):
         events = []
         
         # Make sure data is up-to-date
-        self.coordinator.async_update()
+        if hasattr(self.coordinator, "async_update"):
+            self.coordinator.async_update()
         
         for book in self.coordinator.data:
             if not book.get("due_date"):

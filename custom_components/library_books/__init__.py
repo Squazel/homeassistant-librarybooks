@@ -16,6 +16,8 @@ try:
         from .scrapers.libero_scraper import LiberoLibraryScraper
         from .const import DOMAIN, CONF_LIBRARY_TYPE, CONF_LIBRARY_URL, CONF_USERNAME, CONF_PASSWORD, CONF_NAME
         
+        _LOGGER = logging.getLogger(__name__)
+        
         # Get configuration
         library_type = entry.data[CONF_LIBRARY_TYPE]
         library_url = entry.data[CONF_LIBRARY_URL]
