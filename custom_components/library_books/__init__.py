@@ -1,5 +1,5 @@
 """The Library Books integration."""
-import logging
+from datetime import timedelta
 
 # Try importing Home Assistant components, but don't fail if they're not available
 # This keeps your tests working while still supporting Home Assistant integration
@@ -15,8 +15,6 @@ try:
         from .coordinator import LibraryBooksCoordinator
         from .scrapers.libero_scraper import LiberoLibraryScraper
         from .const import DOMAIN, CONF_LIBRARY_TYPE, CONF_LIBRARY_URL, CONF_USERNAME, CONF_PASSWORD, CONF_NAME
-        
-        _LOGGER = logging.getLogger(__name__)
         
         # Get configuration
         library_type = entry.data[CONF_LIBRARY_TYPE]
@@ -34,9 +32,8 @@ try:
         # Create coordinator and store in hass data
         coordinator = LibraryBooksCoordinator(
             hass,
-            _LOGGER,
-            library_api=library_api,
-            name=f"Library Books {library_name}",
+            scraper,
+            name=f"Library Books - {name}",
             update_interval=timedelta(hours=6),
         )
         
