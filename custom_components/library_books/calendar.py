@@ -9,7 +9,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util import dt as dt_util
 
-from .book import LibraryBook
+from .models import LibraryBook
 from .const import DOMAIN, CONF_NAME
 from .coordinator import LibraryBooksCoordinator
 
