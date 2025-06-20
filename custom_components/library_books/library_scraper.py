@@ -41,7 +41,6 @@ class BaseLibraryScraper(ABC):
         """Attempt to renew a book. Returns True if successful."""
         pass
 
-    @abstractmethod
     async def logout(self) -> None:
         """Logout from the library system."""
         def close_session():
