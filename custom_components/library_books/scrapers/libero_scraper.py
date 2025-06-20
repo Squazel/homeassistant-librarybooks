@@ -51,23 +51,25 @@ class LiberoLibraryScraper(BaseLibraryScraper):
             success = await loop.run_in_executor(None, do_login)
             
             if success:
-                self._logged_in = True
                 _LOGGER.info("Login successful")
+            else:
+                _LOGGER.error("Login failed")
             
             return success
             
         except Exception as e:
             _LOGGER.error(f"Login failed with exception: {e}")
             return False
-    
-    async def get_outstanding_books(self) -> List[LibraryBook]:
+
+    async def get_outstanding_books(self, force_login: bool = True) -> List[LibraryBook]:
         """Get outstanding books from Libero API."""
         try:
-            if not self._logged_in:
+            if force_login:
+                _LOGGER.debug("Force login requested, logging in...")
                 login_success = await self.login()
                 if not login_success:
-                    _LOGGER.error("Not logged in, can't get books")
-                    return []
+                    _LOGGER.error("Login failed, can't get books")
+                    raise Exception("Authentication failed")
             
             def get_books():
                 api_url = f"{self.library_url.rstrip('/')}{self.API_ENDPOINT}"
@@ -79,7 +81,7 @@ class LiberoLibraryScraper(BaseLibraryScraper):
                     return response.json()
                 else:
                     _LOGGER.error(f"Failed to get API data: HTTP {response.status_code}")
-                    return None
+                    raise Exception(f"API request failed with status {response.status_code}")
             
             loop = asyncio.get_running_loop()
             json_data = await loop.run_in_executor(None, get_books)
@@ -90,8 +92,8 @@ class LiberoLibraryScraper(BaseLibraryScraper):
                 return []
                 
         except Exception as e:
-            _LOGGER.error(f"Failed to get outstanding books from API: {e}")
-            return []
+            _LOGGER.error(f"Failed to get outstanding books: {e}")
+            raise  # Re-raise to let coordinator handle it
     
     def _parse_libero_api_data(self, json_data) -> List[LibraryBook]:
         """Parse books from Libero API JSON response."""
@@ -224,15 +226,7 @@ class LiberoLibraryScraper(BaseLibraryScraper):
         """Attempt to renew a book in Libero system."""
         # TODO: Implement renewal logic using requests
         return False
-        
+
     async def logout(self) -> None:
-        """Logout from the library system."""
-        self._logged_in = False
-        
-        def close_session():
-            if self.session:
-                self.session.close()
-            
-        loop = asyncio.get_running_loop()
-        await loop.run_in_executor(None, close_session)
-        self.session = None
+        raise NotImplementedError
+

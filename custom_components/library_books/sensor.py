@@ -42,15 +42,22 @@ class LibraryBooksTotalSensor(CoordinatorEntity, SensorEntity):
         self._attr_unique_id = f"{DOMAIN}_{library_name.lower().replace(' ', '_')}_total_books"
         self._attr_name = f"{library_name} Total Books"
         self._attr_icon = "mdi:book-multiple"
-        self._attr_device_class = "library_books"
         self._attr_native_unit_of_measurement = "books"
         
     @property
-    def native_value(self) -> int:
-        """Return the total number of books."""
+    def available(self) -> bool:
+        """Return if entity is available."""
+        # Entity is available even if the last update failed, as long as we have previous data
+        return self.coordinator.last_update_success or (
+            hasattr(self.coordinator, 'data') and self.coordinator.data is not None
+        )
+
+    @property
+    def native_value(self):
+        """Return the native value of the sensor."""
         if not self.coordinator.data:
             return 0
-        
+            
         return len(self.coordinator.data)
         
     @property
@@ -83,9 +90,16 @@ class LibraryBooksOverdueSensor(CoordinatorEntity, SensorEntity):
         self._attr_unique_id = f"{DOMAIN}_{library_name.lower().replace(' ', '_')}_overdue_books"
         self._attr_name = f"{library_name} Overdue Books"
         self._attr_icon = "mdi:book-alert"
-        self._attr_device_class = "library_books"
         self._attr_native_unit_of_measurement = "books"
         
+    @property
+    def available(self) -> bool:
+        """Return if entity is available."""
+        # Entity is available even if the last update failed, as long as we have previous data
+        return self.coordinator.last_update_success or (
+            hasattr(self.coordinator, 'data') and self.coordinator.data is not None
+        )
+
     @property
     def native_value(self) -> int:
         """Return the number of overdue books."""

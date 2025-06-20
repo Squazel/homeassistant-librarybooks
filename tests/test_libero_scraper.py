@@ -37,13 +37,15 @@ async def test_libero_scraper():
     )
     
     try:
-        print("Testing login...")
+        # Test 1: Test login separately
+        print("🔐 Testing login...")
         login_success = await scraper.login()
         print(f"Login successful: {login_success}")
 
         if login_success:
-            print("Getting outstanding books...")
-            books = await scraper.get_outstanding_books()
+            # Test 2: Test getting books without forcing login (using existing session)
+            print("📚 Getting books without force login...")
+            books = await scraper.get_outstanding_books(force_login=False)
             print(f"Found {len(books)} books:")
             
             for book in books:
@@ -56,6 +58,11 @@ async def test_libero_scraper():
                 else:
                     print(f"     Due in {book.days_until_due} days")
                 print()
+        
+        # Test 3: Test getting books with force login (simulates normal usage)
+        print("\n🔄 Testing with force login (normal usage)...")
+        books = await scraper.get_outstanding_books(force_login=True)
+        print(f"Found {len(books)} books with force login")
         
     except Exception as e:
         print(f"Error: {e}")

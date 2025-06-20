@@ -88,3 +88,11 @@ class LibraryBooksCalendar(CalendarEntity):
         return {
             "library_name": self._library_name,
         }
+
+    @property
+    def available(self) -> bool:
+        """Return if entity is available."""
+        # Calendar is available even if the last update failed, as long as we have previous data
+        return self.coordinator.last_update_success or (
+            hasattr(self.coordinator, 'data') and self.coordinator.data is not None
+        )

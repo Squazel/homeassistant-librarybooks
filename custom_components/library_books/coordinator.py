@@ -38,16 +38,17 @@ class LibraryBooksCoordinator(DataUpdateCoordinator):
     async def _async_update_data(self) -> List[LibraryBook]:
         """Fetch data from API."""
         try:
-            books = await self.scraper.get_books_with_retry(max_retries=3)
+            books = await self.scraper.get_books_with_retry(max_retries=2, force_login=True)
             
             # Add library name to books for multi-library setups
             for book in books:
                 book.library_name = self.library_name
                 
-            self.books = books
             return books
+            
         except Exception as ex:
-            _LOGGER.error("Error fetching library books: %s", ex)
+            _LOGGER.warning(f"Failed to fetch library books: {ex}")
+            # Raise UpdateFailed but keep entities available with last known state
             raise UpdateFailed(f"Error fetching library books: {ex}")
     
     # Renewal functionality is disabled for now
