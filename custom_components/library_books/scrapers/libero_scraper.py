@@ -226,7 +226,3 @@ class LiberoLibraryScraper(BaseLibraryScraper):
         """Attempt to renew a book in Libero system."""
         # TODO: Implement renewal logic using requests
         return False
-
-    async def logout(self) -> None:
-        raise NotImplementedError
-
