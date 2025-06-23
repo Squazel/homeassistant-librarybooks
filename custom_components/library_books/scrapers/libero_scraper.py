@@ -9,6 +9,13 @@ from ..models import LibraryBook
 
 _LOGGER = logging.getLogger(__name__)
 
+def _normalize_library_url(url: str) -> str:
+    url = url.strip()
+    if not url.startswith("http://") and not url.startswith("https://"):
+        url = "https://" + url
+    url = url.rstrip("/")
+    return url
+
 class LiberoLibraryScraper(BaseLibraryScraper):
     """
     Libero library system scraper.
@@ -26,6 +33,9 @@ class LiberoLibraryScraper(BaseLibraryScraper):
         Note: This scraper uses requests library internally and does not accept
         an external session parameter.
         """
+        # Normalize the library URL
+        library_url = _normalize_library_url(library_url)
+
         # Initialize base class with our library parameters and a new requests session
         super().__init__(library_url, username, password, requests.Session())
     

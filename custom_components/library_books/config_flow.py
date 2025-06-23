@@ -15,6 +15,14 @@ _LOGGER = logging.getLogger(__name__)
 
 LIBRARY_TYPES = ["libero"]
 
+def _normalize_library_url(url: str) -> str:
+    """Ensure the library URL has https:// and no trailing slash."""
+    url = url.strip()
+    if not url.startswith("http://") and not url.startswith("https://"):
+        url = "https://" + url
+    url = url.rstrip("/")
+    return url
+
 class LibraryBooksConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Library Books."""
 
@@ -25,6 +33,8 @@ class LibraryBooksConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
         
         if user_input is not None:
+            # Clean up the library URL
+            user_input[CONF_LIBRARY_URL] = _normalize_library_url(user_input[CONF_LIBRARY_URL])
             # Create unique ID using library name and username - properly slugified
             safe_library_name = slugify(user_input[CONF_NAME])
             safe_username = slugify(user_input[CONF_USERNAME])
