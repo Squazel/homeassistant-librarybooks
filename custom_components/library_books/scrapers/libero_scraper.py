@@ -171,12 +171,15 @@ class LiberoLibraryScraper(BaseLibraryScraper):
                     if not rsn_item:
                         _LOGGER.warning(f"RSN {rsn} not found in related barcodes by ID, skipping")
                         continue
+                    
                     # Get ISBN, Title, Author
-                    isbn = rsn_item.get('ISBN').strip()
-                    title = rsn_item.get('Title').strip()
-                    author = rsn_item.get('AuthorKey', rsn_item.get('MainAuthor', 'Unknown')).strip()
+                    isbn = rsn_item.get('ISBN', '').strip()
+                    title = rsn_item.get('Title', 'Unknown Title')
+                    author = rsn_item.get('AuthorKey', rsn_item.get('MainAuthor', 'Unknown'))
+
                     # Get image URL
-                    image_url = f"{self.library_url}/libero/Cover.cls?type=cover&size=80&isbn={isbn}"
+                    if isbn != '':
+                        image_url = f"{self.library_url}/libero/Cover.cls?type=cover&size=80&isbn={isbn}"
 
                     # Log the data
                     _LOGGER.info(f"Found book - Barcode: {barcode}, DueDate: {due_date_str}, ISBN: {isbn}, Title: {title}")
