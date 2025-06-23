@@ -70,6 +70,7 @@ class LibraryBooksCalendar(CalendarEntity):
                     end=due_date + timedelta(days=1),
                     summary=book.title or "Unknown Title",
                     description=f"Author: {book.author or 'N/A'}\nOverdue: {'Yes' if book.is_overdue else 'No'}",
+                    location=self._library_name,
                     uid=book.barcode,
                 )
                 events.append(event)
