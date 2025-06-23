@@ -14,7 +14,7 @@
         "data_description": {
           "name": "A friendly name for this library account",
           "library_type": "The type of library system your library uses",
-          "library_base_url": "e.g. https://<library_name>.libero.com.au",
+          "library_base_url": "e.g. https://my_library_name.libero.com.au",
           "username": "Your library card number or username",
           "password": "Your library PIN or password"
         }
