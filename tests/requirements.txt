@@ -1,4 +1,4 @@
 pytest
 pytest-asyncio
-aiohttp
+requests
 beautifulsoup4

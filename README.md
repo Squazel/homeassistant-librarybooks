@@ -66,6 +66,56 @@ Each library account you configure will create a calendar in Home Assistant:
 
 You can add these calendars to any Home Assistant calendar card or connect them to external calendar applications.
 
+## Automation Examples
+
+### Overdue Book Notifications
+```yaml
+automation:
+  - alias: "Overdue Library Books"
+    trigger:
+      platform: numeric_state
+      entity_id: sensor.library_overdue_books
+      above: 0
+    action:
+      service: notify.mobile_app
+      data:
+        title: "Library Books Overdue!"
+        message: "You have {{ states('sensor.library_overdue_books') }} overdue books"
+```
+
+### Weekly Book Summary
+```yaml
+automation:
+  - alias: "Weekly Library Book Summary"
+    trigger:
+      platform: time
+      at: "09:00:00"
+    condition:
+      condition: time
+      weekday:
+        - sun
+    action:
+      service: notify.mobile_app
+      data:
+        title: "Library Books Summary"
+        message: >
+          You have {{ states('sensor.library_total_books') }} books borrowed.
+          {% if states('sensor.library_overdue_books')|int > 0 %}
+          {{ states('sensor.library_overdue_books') }} are overdue!
+          {% endif %}
+```
+
+### Sensor Entities Created
+
+The integration creates these sensors for each library account:
+
+- `sensor.{library_name}_total_books` - Total number of borrowed books
+- `sensor.{library_name}_overdue_books` - Number of overdue books
+
+**Note:** Replace `{library_name}` with the actual library name you configure during setup (e.g., `main_library`, `downtown_branch`, etc.).
+
+Each sensor includes detailed attributes with book information.
+
 ## Troubleshooting
 
 If you encounter issues:

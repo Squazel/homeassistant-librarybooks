@@ -1,3 +1,3 @@
-aiohttp
+requests
 beautifulsoup4
 voluptuous

@@ -1,12 +1,12 @@
 """Test configuration and fixtures."""
 import pytest
-import aiohttp
-from unittest.mock import AsyncMock
+import requests
+from unittest.mock import Mock
 
 @pytest.fixture
-async def mock_session():
-    """Mock aiohttp session for testing."""
-    session = AsyncMock(spec=aiohttp.ClientSession)
+def mock_session():
+    """Mock requests session for testing."""
+    session = Mock(spec=requests.Session)
     return session
 
 @pytest.fixture

@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "slug": "library_books",
   "description": "A Home Assistant integration to scrape local library's website for outstanding books and display them in a calendar.",
-  "url": "https://github.com/yourusername/library-books-integration",
-  "issues": "https://github.com/yourusername/library-books-integration/issues",
+  "url": "https://github.com/Squazel/library-books-integration",
+  "issues": "https://github.com/Squazel/library-books-integration/issues",
   "license": "MIT",
   "dependencies": [],
   "homeassistant": "2023.1.0",
-  "codeowners": ["@yourusername"],
+  "codeowners": ["@Squazel"],
   "requirements": []
 }

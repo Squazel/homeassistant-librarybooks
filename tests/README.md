@@ -87,8 +87,11 @@ python tests/test_libero_scraper.py
 Test your scraper implementation directly:
 
 ```bash
-# Set environment variables first, then:
+# Set environment variables first, then either:
 python tests/test_libero_scraper.py
+
+# Or run via pytest:
+python -m pytest tests/test_libero_scraper.py -v -s
 ```
 
 ## Test Structure
@@ -135,9 +138,9 @@ async def test_new_scraper():
 
 ## Fixtures Available
 
-From [`conftest.py`](conftest.py):
+From `conftest.py`:
 
-- `mock_session` - Mocked aiohttp session for unit tests
+- `mock_session` - Mocked requests session for unit tests
 - `sample_library_book` - Pre-configured LibraryBook object for testing
 
 ## Troubleshooting
@@ -147,7 +150,6 @@ From [`conftest.py`](conftest.py):
 If you get import errors, make sure you're running from the project root:
 
 ```bash
-cd "c:\Users\Michael Downward\Dev\Home Assistant\homeassistant-librarybooks"
 python -m pytest tests/
 ```
 
@@ -159,13 +161,23 @@ If `test_libero_scraper.py` shows the environment variable warning, make sure:
 2. Variable names match exactly (case-sensitive)
 3. You're running from the same terminal where you set the variables
 
+### HTTP Request Issues
+
+If the scraper can't connect to your library:
+
+1. Verify the library URL is correct and accessible
+2. Check your network connection
+3. Ensure the library website is not blocking requests
+4. Verify your credentials are correct
+
 ### HTML Parsing Issues
 
 If the scraper can't find books, you may need to:
 
 1. Inspect your library's HTML structure
-2. Update the CSS selectors in [`libero_scraper.py`](../custom_components/library_books/scrapers/libero_scraper.py)
-3. Check the login process and form field names
+2. Update the parsing logic in `libero_scraper.py`
+3. Check the login process and API endpoints
+4. Look at the JSON response structure
 
 ## Security Notes
 
@@ -181,5 +193,5 @@ If tests fail:
 1. Check the error messages carefully
 2. Verify your library website is accessible
 3. Ensure your credentials are correct
-4. Look at the HTML response to debug parsing issues
+4. Look at the API response to debug parsing issues
 5. Check the [main README](../README.md) for additional setup information
