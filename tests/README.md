@@ -52,6 +52,22 @@ LIBRARY_PASSWORD=your_library_password
 
 **Note:** Ensure that `.env` has been added to your `.gitignore` to avoid committing credentials!
 
+## Using a .env File for Credentials
+
+You can store your library credentials in a `.env` file in the project root. The integration tests will automatically load credentials from `.env` if present (using `python-dotenv`).
+
+Example `.env` file:
+```env
+LIBRARY_URL=https://your-library-website.com
+LIBRARY_USERNAME=your_library_username
+LIBRARY_PASSWORD=your_library_password
+```
+- Place `.env` in the project root directory.
+- Make sure `.env` is listed in your `.gitignore` to avoid committing sensitive data.
+- If both environment variables and `.env` are set, environment variables take precedence.
+
+This makes it easy to run integration tests locally without exposing credentials.
+
 ## Running Tests
 
 ### Unit Tests Only
